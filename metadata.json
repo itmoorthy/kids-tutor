@@ -1,0 +1,5 @@
+{
+  "name": "Kids Tutor",
+  "description": "An interactive AI-powered educational tutor for students in Grades 1-5, covering English, Math, and Science.",
+  "requestFramePermissions": ["microphone"]
+}
