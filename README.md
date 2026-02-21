@@ -10,33 +10,27 @@ An interactive AI-powered educational tutor for students in Grades 1-5.
 
 ## How to Deploy to GitHub Pages
 
-1. **Structure your repository**:
-   - This project is built with React, TypeScript, and Vite.
-   - Ensure your `package.json` has a `build` script: `"build": "tsc && vite build"`.
-   - Ensure `vite.config.ts` has `base: './'` if you are deploying to a subfolder or just use the default for root domains.
+The `gh-pages` branch will **not** appear in your GitHub settings until you run the deployment command from your computer. Follow these steps:
 
-2. **Build the project**:
-   ```bash
-   npm install
-   npm run build
-   ```
+1.  **Open your terminal** in the project folder on your computer.
+2.  **Install dependencies** (if you haven't already):
+    ```bash
+    npm install
+    ```
+3.  **Run the deploy command**:
+    ```bash
+    npm run deploy
+    ```
+    *This command will automatically build your app and create/update the `gh-pages` branch on GitHub.*
 
-3. **Deploy the `dist` folder**:
-   - You can use the `gh-pages` package:
-     ```bash
-     npm install gh-pages --save-dev
-     ```
-   - Add these scripts to `package.json`:
-     ```json
-     "predeploy": "npm run build",
-     "deploy": "gh-pages -d dist"
-     ```
-   - Run `npm run deploy`.
+4.  **Wait a minute**, then go to your GitHub repository on the web.
+5.  **Go to Settings > Pages**.
+6.  Under **Build and deployment > Branch**, you should now see `gh-pages` in the dropdown. Select it and click **Save**.
 
-4. **GitHub Settings**:
-   - Go to your repository settings on GitHub.
-   - Navigate to **Pages**.
-   - Select the `gh-pages` branch as the source.
+## Troubleshooting
+- **"gh-pages not found"**: This happens if you haven't run `npm run deploy` yet. The branch is created by the script.
+- **White screen after deploy**: Ensure `vite.config.ts` has `base: './'`. (I have already added this for you).
+- **API Key**: Remember to set your Gemini API Key in the app's **Settings** (Gear icon) after it's deployed.
 
 ## Configuration
 The app requires a Gemini API Key. You can:
