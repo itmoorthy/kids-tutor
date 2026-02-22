@@ -142,7 +142,7 @@ export default function App() {
       const prompt = `Hi! I'm ${name}, a Grade ${grade} student. I'm ready to learn ${subject}!`;
 
       const response = await genAI.models.generateContent({
-        model: "gemini-2.5-flash",
+        model: "gemini-3-flash-preview",
         contents: [{ role: 'user', parts: [{ text: prompt }] }],
         config: {
           systemInstruction,
@@ -185,7 +185,7 @@ export default function App() {
       }));
 
       const responseStream = await genAI.models.generateContentStream({
-        model: "gemini-2.5-flash",
+        model: "gemini-3-flash-preview",
         contents: history,
         config: {
           systemInstruction,
