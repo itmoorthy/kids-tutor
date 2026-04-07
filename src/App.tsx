@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect, useRef } from 'react';
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI, ThinkingLevel } from "@google/genai";
 import Markdown from 'react-markdown';
 import { 
   BookOpen, 
@@ -136,7 +136,7 @@ export default function App() {
       2. Ask exactly ONE fun question to start.
       3. When the student answers, validate it (praise if correct, gentle correction if wrong).
       4. Explain the 'Why' in very simple terms for a child.
-      5. Ask the NEXT follow-up question to keep the loop going.
+      5. Ask the NEXT follow-up question to keep the loop going once student answert correctly to the question which you asked.
       Keep your responses relatively short and very engaging.`;
 
       const prompt = `Hi! I'm ${name}, a Grade ${grade} student. I'm ready to learn ${subject}!`;
@@ -179,23 +179,41 @@ export default function App() {
       Validate the student's answer, explain why, and ask the next question.`;
 
       // Format history for the API
-      // Note: The SDK expects 'user' and 'model' roles.
       const history = newMessages.map(m => ({
         role: m.role,
         parts: [{ text: m.text }]
       }));
 
-      const response = await genAI.models.generateContent({
+      const responseStream = await genAI.models.generateContentStream({
         model: "gemini-3-flash-preview",
         contents: history,
         config: {
           systemInstruction,
           temperature: 0.7,
+          thinkingConfig: { thinkingLevel: ThinkingLevel.LOW }
         }
       });
 
-      const aiText = response.text || "That's interesting! Let's try another one.";
-      setMessages([...newMessages, { role: 'model', text: aiText }]);
+      let fullText = "";
+      // Add an empty model message that we will populate
+      setMessages([...newMessages, { role: 'model', text: "" }]);
+
+      for await (const chunk of responseStream) {
+        const chunkText = chunk.text;
+        if (chunkText) {
+          if (fullText === "") {
+            setIsLoading(false);
+          }
+          fullText += chunkText;
+          setMessages(prev => {
+            const updated = [...prev];
+            if (updated.length > 0 && updated[updated.length - 1].role === 'model') {
+              updated[updated.length - 1] = { ...updated[updated.length - 1], text: fullText };
+            }
+            return updated;
+          });
+        }
+      }
     } catch (err: any) {
       setError(err.message || 'Failed to send message.');
     } finally {
